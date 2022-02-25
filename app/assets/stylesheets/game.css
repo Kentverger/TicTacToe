@@ -1,0 +1,49 @@
+.game {
+  display: flex;
+  flex-direction: column;
+}
+.game__board {
+  display: flex;
+  flex-wrap: wrap;
+  width: 306px;
+  height: 306px;
+  border: 1px solid #C4C4C4;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.board__button {
+  width: 100px;
+  height: 100px;
+  background-color: #EAEAEA;
+  color: #2D4558;
+  font-size: 42px;
+  margin: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game__new-button {
+  width: 200px;
+  height:60px;
+  background-color: #2D4558;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border: 0;
+  margin: 32px auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.game__title {
+  text-align: center;
+  color: #444444;
+  font-size: 36px;
+  line-height: 1.33;
+  font-weight: 500;
+  margin-top: 60px;
+  margin-bottom: 20px;
+}

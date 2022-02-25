@@ -1,2 +1,140 @@
-<h1>Games#new</h1>
-<p>Find me in app/views/games/new.html.erb</p>
+<div class="game">
+  <h1 class="game__title">Tic Tac Toe</h1>
+  <div class="game__board">
+    <div data-state="available" data-coordinate-x="1" data-coordinate-y="3" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="2" data-coordinate-y="3" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="3" data-coordinate-y="3" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="1" data-coordinate-y="2" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="2" data-coordinate-y="2" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="3" data-coordinate-y="2" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="1" data-coordinate-y="1" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="2" data-coordinate-y="1" class="board__button">
+    </div>
+    <div data-state="available" data-coordinate-x="3" data-coordinate-y="1" class="board__button">
+    </div>
+  </div>
+  <button class="game__new-button">NEW GAME</button>
+</div>
+<script type="text/javascript">
+  (function() {
+    function Server() {
+      this.endpoints = {
+        setTurn: {
+          url: '<%= turns_path(format: :json) %>',
+          method: 'post'
+        },
+        createGame: {
+          url: '<%= games_path(format: :json) %>',
+          method: 'post',
+        }
+      };
+
+      this.headers = {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelectorAll('meta[name="csrf-token"]')[0].getAttribute('content')
+      }
+    }
+
+    Server.prototype.createTurn = function(piece, gameId){
+      var data = {
+        turn: {
+          game_id: gameId,
+          x: piece.dataset.coordinateX,
+          y: piece.dataset.coordinateY,
+          badge: piece.dataset.state,
+        }
+      }
+
+      fetch(this.endpoints.setTurn.url, {
+        method: this.endpoints.setTurn.method,
+        body: JSON.stringify(data),
+        headers: this.headers,
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        if(data.winner !== false){
+          alert(data.winner);
+        }
+      });
+    }
+
+    Server.prototype.createGame = function(){
+      return fetch(this.endpoints.createGame.url, {
+        method: this.endpoints.createGame.method,
+        body: JSON.stringify(this.endpoints.createGame.data),
+        headers: this.headers,
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        return data.id;
+      });
+    }
+
+    function Game() {
+      this.playerTurn = false;
+      this.server = new Server();
+      this.id = 0;
+
+      this.server.createGame().then(
+        function(data){
+          this.id = data;
+        }.bind(this)
+      );
+    }
+
+    Game.prototype.updatePiece = function (piece) {
+      var currentState = piece.dataset.state;
+
+      if (currentState === 'available') {
+        if (this.playerTurn){
+          piece.dataset.state = 'Cross';
+          piece.innerHTML = '<ion-icon name="close-outline"></ion-icon>'
+          this.server.createTurn(piece, this.id);
+        } else {
+          piece.dataset.state = 'Circle';
+          piece.innerHTML = '<ion-icon name="radio-button-off-outline"></ion-icon>'
+          this.server.createTurn(piece, this.id);
+        }
+      }
+    }
+
+    Game.prototype.turn = function (piece) {
+      this.updatePiece(piece);
+      this.playerTurn = !this.playerTurn;
+    }
+
+    Game.prototype.restartGame = function (pieces){
+      this.server.createGame().then(
+        function(data){
+          this.id = data;
+        }.bind(this)
+      );
+
+      pieces.forEach(function (piece) {
+        piece.innerHTML = '';
+        piece.dataset.state = 'available';
+      });
+    }
+
+    var game = new Game();
+
+    var pieces = document.querySelectorAll(".board__button");
+    pieces.forEach(function (piece) {
+      piece.addEventListener('click', function(event){
+        game.turn(event.target);
+      });
+    });
+
+    var newGame = document.querySelectorAll(".new-game")[0];
+    newGame.addEventListener('click', function(event) {
+      game.restartGame(pieces);
+    });
+  })();
+</script>
