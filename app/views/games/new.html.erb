@@ -24,6 +24,11 @@
 </div>
 <script type="text/javascript">
   (function() {
+    /**
+    * Object for the server side communication.
+    *
+    * @constructor
+    */
     function Server() {
       this.endpoints = {
         setTurn: {
@@ -42,8 +47,14 @@
       }
     }
 
+    /**
+    * Create a turn in the backend, it response if a player win the game.
+    *
+    * @param piece HTML element for the piece selected by the player.
+    * @param gameId The identifier of the game.
+    */
     Server.prototype.createTurn = function(piece, gameId){
-      var data = {
+      const data = {
         turn: {
           game_id: gameId,
           x: piece.dataset.coordinateX,
@@ -65,6 +76,9 @@
       });
     }
 
+    /**
+    * Create a game in the backend.
+    */
     Server.prototype.createGame = function(){
       return fetch(this.endpoints.createGame.url, {
         method: this.endpoints.createGame.method,
@@ -77,6 +91,11 @@
       });
     }
 
+    /**
+    * Object to handle all game interaction with players and server backend.
+    *
+    * @constructor
+    */
     function Game() {
       this.playerTurn = false;
       this.server = new Server();
@@ -89,8 +108,14 @@
       );
     }
 
+    /**
+    * Change the piece status and badge icon depending of the player turn.
+    * It also create the turn on the server.
+    *
+    * @param piece HTML element for the piece selected by the player.
+    */
     Game.prototype.updatePiece = function (piece) {
-      var currentState = piece.dataset.state;
+      const currentState = piece.dataset.state;
 
       if (currentState === 'available') {
         if (this.playerTurn){
@@ -105,11 +130,23 @@
       }
     }
 
+    /**
+    * Function for the on slot board click event, when the user click one slot on the borad this function will be triggered.
+    * It will change the players turn and it will update the piece status.
+    *
+    * @param piece HTML element for the piece selected by the player.
+    */
     Game.prototype.turn = function (piece) {
       this.updatePiece(piece);
       this.playerTurn = !this.playerTurn;
     }
 
+    /**
+    * Function for the on new game button click event, when the user click the button this function will be triggerd.
+    * It clean all the states of the borads slots and create new game in the server.
+    *
+    * @param pieces HTML elements for the pieces on the borad.
+    */
     Game.prototype.restartGame = function (pieces){
       this.server.createGame().then(
         function(data){
@@ -123,16 +160,16 @@
       });
     }
 
-    var game = new Game();
+    const game = new Game();
 
-    var pieces = document.querySelectorAll(".board__button");
+    const pieces = document.querySelectorAll(".board__button");
     pieces.forEach(function (piece) {
       piece.addEventListener('click', function(event){
         game.turn(event.target);
       });
     });
 
-    var newGame = document.querySelectorAll(".new-game")[0];
+    const newGame = document.querySelectorAll(".game__new-button")[0];
     newGame.addEventListener('click', function(event) {
       game.restartGame(pieces);
     });
