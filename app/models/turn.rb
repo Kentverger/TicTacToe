@@ -1,11 +1,11 @@
 class Turn < ApplicationRecord
   belongs_to :game
 
-  scope :cross, -> { where(badge: 'Cross') } 
-  scope :circle, -> { where(badge: 'Circle') } 
+  scope :cross, -> { where(badge: 'Cross') }
+  scope :circle, -> { where(badge: 'Circle') }
 
-  scope :x, -> (x) { where(x: x) } 
-  scope :y, -> (y) { where(y: y) } 
+  scope :x, -> (x) { where(x: x) }
+  scope :y, -> (y) { where(y: y) }
 
   scope :position, -> (x, y) { where(x: x, y: y) }
 
@@ -22,6 +22,6 @@ class Turn < ApplicationRecord
   end
 
   def self.column_circle(x: nil)
-    self.cross.x(x)
+    self.circle.x(x)
   end
 end
