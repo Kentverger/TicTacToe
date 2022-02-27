@@ -18,8 +18,9 @@ $ bundle install
 # Modify config/database.yml with your database credentials
 $ rails db:setup
 $ rails db:migrate
+$ rails s
 ```
-Open http://127.0.0.1:3000/games/new and play!!.
+Open http://127.0.0.1:3000/games/new and play!!
 
 ## Running the tests
 ```
@@ -30,3 +31,6 @@ $ rspec
 ```
 $ rspec --format documentation --format html --out docs.html
 ```
+
+# Algorithm
+Visit http://127.0.0.1:3000/algorithm and see the results :)
